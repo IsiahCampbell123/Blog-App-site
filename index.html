@@ -122,17 +122,7 @@
     <div class="container">
         <!-- Blog Posts -->
         <div id="blogPosts">
-            <div class="post">
-                <h2>My First Blog Post</h2>
-                <p>Welcome to my blog! This is my very first post, and I'm excited to share my journey with you. In this blog, I will write about technology, personal experiences, and topics that interest me. I hope you enjoy reading it!</p>
-                <div class="post-footer">Posted by Author on January 1, 2024</div>
-            </div>
-
-            <div class="post">
-                <h2>Exploring Web Development</h2>
-                <p>Web development has always fascinated me. In this post, I'll be sharing my thoughts and experiences on the different aspects of web development, including front-end and back-end technologies, best practices, and how to get started with web development.</p>
-                <div class="post-footer">Posted by Author on February 15, 2024</div>
-            </div>
+            <!-- Blog posts will be loaded here dynamically -->
         </div>
 
         <a href="#create-post" class="btn">Write a New Blog Post</a>
@@ -149,6 +139,37 @@
     </div>
 
     <script>
+        // Function to save posts to localStorage
+        function savePost(title, content) {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const newPost = {
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString()
+            };
+            posts.push(newPost);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            loadPosts(); // Reload posts after saving
+        }
+
+        // Function to load and display posts from localStorage
+        function loadPosts() {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const postsContainer = document.getElementById('blogPosts');
+            postsContainer.innerHTML = ''; // Clear existing posts
+
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.innerHTML = `
+                    <h2>${post.title}</h2>
+                    <p>${post.content}</p>
+                    <div class="post-footer">Posted on ${post.date}</div>
+                `;
+                postsContainer.appendChild(postElement);
+            });
+        }
+
         // Handle form submission
         const blogForm = document.getElementById('blogForm');
         blogForm.addEventListener('submit', function(event) {
@@ -158,15 +179,18 @@
             const content = document.getElementById('postContent').value;
 
             if (title && content) {
-                // Show alert (or add functionality to save the post)
-                alert('Post Published: ' + title);
+                savePost(title, content);
 
                 // Clear form fields after submission
                 blogForm.reset();
             }
         });
+
+        // Load posts when the page loads
+        window.onload = loadPosts;
     </script>
 </body>
 </html>
+
 
 
